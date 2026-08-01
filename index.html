@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Unibuzz Media — Stories that carry</title>
 <meta name="description" content="Unibuzz Media promotes movies and ad campaigns across platforms, connects productions with brands, and gets your story in front of the right rooms.">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -359,15 +362,57 @@
         </div>
       </div>
     </div>
-    <form onsubmit="event.preventDefault(); alert('Thanks — this form is a static demo. Connect it to Formspree, Netlify Forms, or similar to receive submissions.');">
+    <form id="contact-form">
       <label for="name">Name</label>
-      <input id="name" type="text" placeholder="Your name" required>
+      <input id="name" name="name" type="text" placeholder="Your name" required>
       <label for="email">Email</label>
-      <input id="email" type="email" placeholder="you@company.com" required>
+      <input id="email" name="email" type="email" placeholder="you@company.com" required>
       <label for="message">Message</label>
-      <textarea id="message" placeholder="Tell us about the project..." required></textarea>
-      <button type="submit">Send message</button>
+      <textarea id="message" name="message" placeholder="Tell us about the project..." required></textarea>
+      <button type="submit" id="form-submit-btn">Send message</button>
+      <p id="form-status" style="font-size:13.5px; margin-top:4px; display:none;"></p>
     </form>
+    <script>
+      const form = document.getElementById('contact-form');
+      const statusEl = document.getElementById('form-status');
+      const btn = document.getElementById('form-submit-btn');
+      // Replace YOUR_FORM_ID below with the ID Formspree gives you after you
+      // create a free form at https://formspree.io (see Read Me instructions).
+      const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        statusEl.style.display = 'none';
+
+        try {
+          const response = await fetch(FORMSPREE_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: new FormData(form)
+          });
+
+          if (response.ok) {
+            statusEl.textContent = "Thanks — your message has been sent. We'll get back to you soon.";
+            statusEl.style.color = '#0F6E56';
+            statusEl.style.display = 'block';
+            form.reset();
+          } else {
+            statusEl.textContent = 'Something went wrong. Please try again or email us directly.';
+            statusEl.style.color = '#FF5A36';
+            statusEl.style.display = 'block';
+          }
+        } catch (err) {
+          statusEl.textContent = 'Something went wrong. Please try again or email us directly.';
+          statusEl.style.color = '#FF5A36';
+          statusEl.style.display = 'block';
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Send message';
+      });
+    </script>
   </div>
 </section>
 
